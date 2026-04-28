@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nélida AI - Chat</title>
+    <style>
+        body { background-color: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px; border-bottom: 1px solid #333; }
+        #input-area { padding: 20px; display: flex; gap: 10px; background: #111; }
+        input { flex: 1; padding: 10px; border-radius: 5px; border: none; }
+        button { padding: 10px 20px; background: #8e44ad; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .msg { margin-bottom: 15px; line-height: 1.4; }
+        .user { color: #00ffcc; }
+        .ai { color: #ff00ff; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div class="msg ai"><b>Nélida:</b> Hola Hernán, motor listo. ¿En qué trabajamos hoy?</div>
+    </div>
+    <div id="input-area">
+        <input type="text" id="userIn" placeholder="Escribí un mensaje...">
+        <button onclick="enviar()">Enviar</button>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const esp = params.get('especialidad') || "nelida trainner";
+
+        async function enviar() {
+            const input = document.getElementById('userIn');
+            const container = document.getElementById('chat-container');
+            if (!input.value.trim()) return;
+
+            container.innerHTML += `<div class="msg user"><b>Vos:</b> ${input.value}</div>`;
+            const mensajeEnviado = input.value;
+            input.value = '';
+
+            try {
+                // Aquí conectaremos luego con el worker o la API nueva
+                const res = await fetch('TU_NUEVA_API_URL', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mensaje: mensajeEnviado, rol: esp })
+                });
+                const data = await res.json();
+                container.innerHTML += `<div class="msg ai"><b>Nélida:</b> ${data.respuesta}</div>`;
+            } catch (e) {
+                container.innerHTML += `<div class="msg ai" style="color:red"><b>Error:</b> Todavía falta conectar el motor.</div>`;
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>
